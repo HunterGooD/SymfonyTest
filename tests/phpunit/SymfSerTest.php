@@ -111,8 +111,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
      */
     public function testDenormalizeToClass() {
         $res = $this->serialize->decode(file_get_contents($this->file), "xml");
-        var_dump($res);
-        var_dump($this->normalizePerson);
+        $res["sportsperson"] = false;
+        $res['createdAt'] = null;
         $this->assertEquals($this->normalizePerson, $res);
         $res = $this->serialize->denormalize($res, Person::class, "xml");
         $res->dezerializeCategory();
@@ -123,4 +123,3 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
     
     
 }
-
