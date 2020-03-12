@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<DocumentListResponse>
+  <categories>
+    <name>Category0</name>
+  </categories>
+  <categories>
+    <name>Category1</name>
+  </categories>
+  <categories>
+    <name>Category2</name>
+  </categories>
+  <categories>
+    <name>Category3</name>
+  </categories>
+  <name>Name</name>
+  <age>20</age>
+  <createdAt/>
+  <sportsperson>0</sportsperson>
+</DocumentListResponse>
