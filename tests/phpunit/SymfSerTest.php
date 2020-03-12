@@ -7,6 +7,7 @@ use App\Model\Category;
 use App\Model\Person;
 
 class SymfonyTest extends \PHPUnit_Framework_TestCase {
+
     /**
      * Symfony class Serializer
      */
@@ -26,7 +27,7 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
      * нормализация класса Person
      */
     protected $normalizePerson;
-    
+
     /**
      * Хранит расположение фалйа xml
      * @var string
@@ -46,23 +47,23 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
         for ($i = 0; $i < 4; $i++) {
             $categories[] = new Category($name . $i);
         }
-        $this -> person = new Person();
+        $this->person = new Person();
         $this->person->setName('Name');
         $this->person->setAge(20);
         $this->person->setSportsperson(false);
         $this->person->setCategories($categories);
-        $this -> context = [
+        $this->context = [
             'xml_root_node_name' => 'DocumentListResponse',
             'xml_format_output' => true,
         ];
         $this->normalizePerson = $this->serialize->normalize($this->person);
-        $this->file = __DIR__ . DIRECTORY_SEPARATOR ."file.xml";
+        $this->file = __DIR__ . DIRECTORY_SEPARATOR . "file.xml";
     }
 
     /**
      * из класса в Xml 
      */
-    public function testXML() {        
+    public function testXML() {
         $res = $this->serialize->serialize($this->person, 'xml', $this->context);
         $this->assertXmlStringEqualsXmlFile($this->file, $res);
     }
@@ -82,9 +83,9 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
         $res = $this->serialize->normalize($this->person);
         $this->assertEquals($this->normalizePerson, $res);
         $res = $this->serialize->encode($res, 'xml', $this->context);
-        $this->assertXmlStringEqualsXmlFile(__DIR__ . DIRECTORY_SEPARATOR ."file.xml", $res);
+        $this->assertXmlStringEqualsXmlFile(__DIR__ . DIRECTORY_SEPARATOR . "file.xml", $res);
     }
-    
+
     /**
      * Из xml в класс
      */
@@ -105,8 +106,8 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
         $res->dezerializeCategory();
         $this->assertEquals($this->person, $res);
     }
-    
-     /**
+
+    /**
      * Из xml в класс через массив
      */
     public function testDenormalizeToClass() {
@@ -120,6 +121,5 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals($res->getCategories(), $this->person->getCategories());
         $this->assertEquals($this->person, $res);
     }
-    
-    
+
 }
