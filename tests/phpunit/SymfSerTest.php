@@ -25,18 +25,13 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
     /**
      * нормализация класса Person
      */
-    protected $normalizePerson = [
-        "name" => "Name",
-        "age" => 20,
-        "sportsperson" => false,
-        "categories" => [
-            ["name" => "Category0"],
-            ["name" => "Category1"],
-            ["name" => "Category2"],
-            ["name" => "Category3"]
-        ],
-        "createdAt" => null,
-    ];
+    protected $normalizePerson;
+    
+    /**
+     * Хранит расположение фалйа xml
+     * @var string
+     */
+    protected $file;
 
     /**
      * Вызываеться каждый раз приновом тесте 
@@ -60,18 +55,20 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
             'xml_root_node_name' => 'DocumentListResponse',
             'xml_format_output' => true,
         ];
+        $this->normalizePerson = $this->serialize->normalize($this->person);
+        $this->file = __DIR__ . DIRECTORY_SEPARATOR ."file.xml";
     }
 
     /**
-     * ПРоверка на создание Xml из класса
+     * из класса в Xml 
      */
     public function testXML() {        
         $res = $this->serialize->serialize($this->person, 'xml', $this->context);
-        $this->assertXmlStringEqualsXmlFile(__DIR__ . DIRECTORY_SEPARATOR ."file.xml", $res);
+        $this->assertXmlStringEqualsXmlFile($this->file, $res);
     }
 
     /**
-     * Создание массива
+     * из класса в массив
      */
     public function testNormalize() {
         $res = $this->serialize->normalize($this->person);
@@ -79,24 +76,51 @@ class SymfonyTest extends \PHPUnit_Framework_TestCase {
     }
 
     /**
-     * 
+     * Из класса в xml через массив
      */
     public function testNormalizeToXML() {
         $res = $this->serialize->normalize($this->person);
         $this->assertEquals($this->normalizePerson, $res);
-
-        $res = $this->serialize->serialize($res, 'xml', $this->context);
+        $res = $this->serialize->encode($res, 'xml', $this->context);
         $this->assertXmlStringEqualsXmlFile(__DIR__ . DIRECTORY_SEPARATOR ."file.xml", $res);
     }
+    
+    /**
+     * Из xml в класс
+     */
+    public function testDeserialize() {
+        $res = $this->serialize->deserialize(file_get_contents($this->file), Person::class, "xml");
+        $res->dezerializeCategory();
+        $res->deserializeBoolean();
+        $this->assertEquals($res->getCategories(), $this->person->getCategories());
+        $this->assertEquals($this->person, $res);
+    }
 
+    /**
+     * из массива в класс
+     */
     public function testDenormalize() {
         // echo __DIR__ . DIRECTORY_SEPARATOR ."file.xml";
         $res = $this->serialize->denormalize($this->normalizePerson, Person::class, "xml");
-        $categoryAdapter = new App\Adapter\CategoryAdapter();
-        $denormalizeCategories = $categoryAdapter->getDenormalize($res->getCategories());
-        $res->setCategories($denormalizeCategories);
+        $res->dezerializeCategory();
+        $this->assertEquals($this->person, $res);
+    }
+    
+     /**
+     * Из xml в класс через массив
+     */
+    public function testDenormalizeToClass() {
+        $res = $this->serialize->decode(file_get_contents($this->file), "xml");
+        var_dump($res);
+        var_dump($this->normalizePerson);
+        $this->assertEquals($this->normalizePerson, $res);
+        $res = $this->serialize->denormalize($res, Person::class, "xml");
+        $res->dezerializeCategory();
+        $res->deserializeBoolean();
+        $this->assertEquals($res->getCategories(), $this->person->getCategories());
         $this->assertEquals($this->person, $res);
     }
     
     
 }
+

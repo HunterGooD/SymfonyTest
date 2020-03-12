@@ -53,4 +53,12 @@ class Person {
         $this->createdAt = $createdAt;
     }
 
+    public function dezerializeCategory() {
+        $categoryAdapter = new \App\Adapter\CategoryAdapter();
+        $this->categories = $categoryAdapter->getDenormalize($this->categories);
+    }
+    
+    public function deserializeBoolean() {
+        $this->sportsperson = $this->sportsperson == "0" ? false : true;
+    }
 }
